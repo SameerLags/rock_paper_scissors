@@ -4,12 +4,21 @@
         <meta charset="utf-8">
     </head>
     <body>
-        <p id="asd"></p>
+        <h2>Rock, Paper, Scissors!</h2><br>
+        <p>Choose an option.</p>
+        <div class="buttons">
+            <button id="rock" class="button">Rock</button>
+            <button id="paper" class="button">Paper</button>
+            <button id="scissors" class="button">Scissors</button>
+        </div>
+        <div class="results">
+            
+        </div>
         <script>
             function computerPlay(){
                 plays = ["Rock", "Paper", "Scissors"];
                 return (plays[Math.floor(Math.random()*plays.length)]);
-            }
+            };
 
             function compare(playerSelection, computerSelection){
                 if(playerSelection=="rock"){
@@ -37,26 +46,60 @@
                         default:    return -1;
                     }
                 }
-            }
+            };
+
+            const buttons = document.querySelectorAll("button");
+            buttons.forEach((button) => {
+                button.addEventListener('click', playRound.bind(this, event, button.id));
+            });
+
+            let playerScore = 0;
+            let compScore = 0;
             
-            function game(){
-                function playRound(playerSelection, computerSelection){
-                    result = compare(playerSelection.toLowerCase(), computerSelection.toLowerCase())
-                    playerSelection = playerSelection[0].toUpperCase() + playerSelection.slice(1).toLowerCase()
-                    if(result==1){
-                        return("You Win! "+playerSelection+" beats "+computerSelection)
-                    }else if(result==0){
-                        return("You Lose! "+computerSelection+" beats "+playerSelection)
-                    }else{
-                        return("Its a draw!")
-                    }                
+            function playRound(e, playerSelection){
+                computerSelection = computerPlay();
+                result = compare(playerSelection.toLowerCase(), computerSelection.toLowerCase())
+                playerSelection = playerSelection[0].toUpperCase() + playerSelection.slice(1).toLowerCase()
+                const text = document.querySelector(".results");
+                const para = document.createElement("para");
+
+                if(result==1){
+                    playerScore += 1;
+                    para.innerHTML = "You Win! "+playerSelection+" beats "+computerSelection+"<br>";
+                }else if(result==0){
+                    compScore += 1;
+                    para.innerHTML = "You Lose! "+computerSelection+" beats "+playerSelection+"<br>";
+                }else{
+                    para.innerHTML = "Its a draw!<br>";
                 }
-                for (i=0; i<5; i++){
-                    let playerSelection = prompt("Enter your move:");
-                    console.log(playRound(playerSelection, computerPlay()))
+                text.appendChild(para);
+                checkWinner(para, text);
+            };
+
+            function checkWinner(para, text){
+                if(playerScore==5){
+                    para.innerHTML += "<br>You Win! Well Played";
+                    text.appendChild(para);
+                }else if(compScore==5){
+                    para.innerHTML += "<br>Computer Wins! Better luck next time";
+                    text.appendChild(para);
+                }else{
+                    return;
                 }
-            }
-            game();
+                hideButtons();
+            };
+
+            function hideButtons(){
+                const myBtns = document.querySelector(".buttons");
+                const reset = document.createElement("button");
+                buttons.forEach((button)=>{
+                    myBtns.removeChild(button);
+                });
+                reset.textContent = "Reset";
+                reset.setAttribute("id","reset");
+                reset.setAttribute("onClick", "document.location.reload(true)");
+                myBtns.appendChild(reset);
+            };
         </script>
     </body>
 </html>
